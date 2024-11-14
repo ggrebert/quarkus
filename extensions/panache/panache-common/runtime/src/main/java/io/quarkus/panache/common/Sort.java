@@ -176,6 +176,36 @@ public class Sort {
     }
 
     /**
+     * Sort by the given columns.
+     *
+     * @param columns the columns to sort on.
+     * @return a new Sort instance which sorts on the given columns.
+     */
+    public static Sort by(Column column, Column... columns) {
+        return new Sort().and(column, columns);
+    }
+
+    /**
+     * Sort by the given columns.
+     *
+     * @param columns the columns to sort on.
+     * @return a new Sort instance which sorts on the given columns.
+     */
+    public static Sort by(Column column) {
+        return new Sort().and(column);
+    }
+
+    /**
+     * Sort by the given columns.
+     *
+     * @param columns the columns to sort on.
+     * @return a new Sort instance which sorts on the given columns.
+     */
+    public static Sort by(List<Column> columns) {
+        return new Sort().and(columns);
+    }
+
+    /**
      * Sort by the given columns, in ascending order. Equivalent to {@link #by(String...)}.
      *
      * @param columns the columns to sort on, in ascending order.
@@ -244,15 +274,53 @@ public class Sort {
     }
 
     /**
+     * Add a sort column
+     *
+     * @param column the column to sort on with his properties
+     * @return this instance, modified.
+     */
+    public Sort and(Column column) {
+        this.columns.add(column);
+        return this;
+    }
+
+    /**
+     * Add a sort column
+     *
+     * @param column the column to sort on with his properties
+     * @return this instance, modified.
+     */
+    public Sort and(Column column, Column... columns) {
+        this.columns.add(column);
+        if (columns != null) {
+            for (Column c : columns) {
+                this.columns.add(c);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Add a sort column
+     *
+     * @param column the column to sort on with his properties
+     * @return this instance, modified.
+     */
+    public Sort and(List<Column> columns) {
+        this.columns.addAll(columns);
+        return this;
+    }
+
+    /**
      * Adds a sort column, in ascending order.
      *
      * @param name the new column to sort on, in ascending order.
      * @return this instance, modified.
      * @see #and(String, Direction)
+     * @see #and(Column...)
      */
     public Sort and(String name) {
-        columns.add(new Column(name));
-        return this;
+        return and(new Column(name));
     }
 
     /**
@@ -262,10 +330,10 @@ public class Sort {
      * @param direction the direction to sort on.
      * @return this instance, modified.
      * @see #and(String)
+     * @see #and(Column...)
      */
     public Sort and(String name, Direction direction) {
-        columns.add(new Column(name, direction));
-        return this;
+        return and(new Column(name, direction));
     }
 
     /**
@@ -275,6 +343,7 @@ public class Sort {
      * @param nullPrecedence the null precedence to use.
      * @return this instance, modified.
      * @see #and(String)
+     * @see #and(Column...)
      */
     public Sort and(String name, NullPrecedence nullPrecedence) {
         return and(name, Direction.Ascending, nullPrecedence);
@@ -288,10 +357,10 @@ public class Sort {
      * @param nullPrecedence the null precedence to use.
      * @return this instance, modified.
      * @see #and(String)
+     * @see #and(Column...)
      */
     public Sort and(String name, Direction direction, NullPrecedence nullPrecedence) {
-        columns.add(new Column(name, direction, nullPrecedence));
-        return this;
+        return and(new Column(name, direction, nullPrecedence));
     }
 
     /**

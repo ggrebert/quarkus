@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -518,8 +519,29 @@ public class TestEndpoint {
 
         Sort sort1 = Sort.by("name", "status");
         List<Person> order1 = Arrays.asList(person3, person2, person1);
+        // Sort.Column[] columns = {
+        //         new Sort.Column("name", Sort.Direction.Descending),
+        //         new Sort.Column("status", Sort.Direction.Ascending) };
+        List<Sort.Column> columnList = List.of(
+                new Sort.Column("name", Sort.Direction.Descending),
+                new Sort.Column("status", Sort.Direction.Ascending));
 
         List<Person> list = Person.findAll(sort1).list();
+        Assertions.assertEquals(order1, list);
+
+        // list = Person.findAll(Sort.by(columns)).list();
+        // Assertions.assertEquals(order1, list);
+
+        // list = Person.findAll(Sort.empty().and(columns)).list();
+        // Assertions.assertEquals(order1, list);
+
+        list = Person.findAll(Sort.by(columnList)).list();
+        Assertions.assertEquals(order1, list);
+
+        list = Person.findAll(Sort.empty().and(columnList)).list();
+        Assertions.assertEquals(order1, list);
+
+        list = Person.findAll(columnList.stream().reduce(Sort::by)).list();
         Assertions.assertEquals(order1, list);
 
         list = Person.listAll(sort1);
@@ -532,6 +554,28 @@ public class TestEndpoint {
         List<Person> order2 = Arrays.asList(person1, person2);
 
         list = Person.find("name", sort2, "stef").list();
+        Assertions.assertEquals(order2, list);
+
+        // columns = {
+        //         new Sort.Column("name",Sort.Direction.Ascending),
+        //         new Sort.Column("status",Sort.Direction.Descending) };
+        columnList = List.of(
+                new Sort.Column("name", Sort.Direction.Ascending),
+                new Sort.Column("status", Sort.Direction.Descending));
+
+        // list = Person.find("name", Sort.by(columns), "stef").list();
+        // Assertions.assertEquals(order2, list);
+
+        // list = Person.find("name", Sort.empty().and(columns), "stef").list();
+        // Assertions.assertEquals(order2, list);
+
+        list = Person.find("name", Sort.by(columnList), "stef").list();
+        Assertions.assertEquals(order2, list);
+
+        list = Person.find("name", Sort.empty().and(columnList), "stef").list();
+        Assertions.assertEquals(order2, list);
+
+        list = Person.findAll(columnList.stream().reduce(Sort::by)).list();
         Assertions.assertEquals(order2, list);
 
         list = Person.list("name", sort2, "stef");
